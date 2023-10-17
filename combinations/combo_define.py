@@ -83,8 +83,8 @@ def flash(card_list: List[dict]) -> List[dict] | None:
         # список с картами флеша
         flash_cards = list(filter(lambda elem: elem['suit'] == one_suit_to_flash[0], mix_val_sorted))
 
-    print('AAA mix_val_sorted', mix_val_sorted)
-    print('AAA flash_cards', flash_cards)
+    # print('AAA mix_val_sorted', mix_val_sorted)
+    # print('AAA flash_cards', flash_cards)
     return flash_cards
 
 

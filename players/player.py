@@ -35,6 +35,7 @@ class Player:
         # список словарей карт
         mix_cards_vocab = [calc_card.get_to_calc() for calc_card in mix_cards]
 
+        high_cards = sorted([calc_card.get_to_calc() for calc_card in self.cards], key=lambda elem: elem['val'])
         ps_cards = combo_define.pairs(card_list=mix_cards_vocab)
         op_cards = combo_define.one_pair(all_pairs=ps_cards)
         tp_cards = combo_define.two_pairs(all_pairs=ps_cards)
@@ -46,7 +47,7 @@ class Player:
         sf_cards = combo_define.straight_flash(flash_list=f_cards)
         rf_cards = combo_define.royal_flash(flash_list=f_cards, straight_flash_list=sf_cards)
 
-        print('mix_card:', mix_cards_vocab)
+        print('high_card:', high_cards)
         print('one_pair:', op_cards)
         print('two_pairs:', tp_cards)
         print('three_of_a_kind:', st_cards)
