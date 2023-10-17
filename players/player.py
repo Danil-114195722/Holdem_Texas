@@ -32,7 +32,27 @@ class Player:
     def combo_definition(self, table: List[Card]):
         # список объектов
         mix_cards = self.cards + table
-        # список словарей
+        # список словарей карт
         mix_cards_vocab = [calc_card.get_to_calc() for calc_card in mix_cards]
 
-        combo_define.check_all_combo(mix_card=mix_cards_vocab)
+        ps_cards = combo_define.pairs(card_list=mix_cards_vocab)
+        op_cards = combo_define.one_pair(all_pairs=ps_cards)
+        tp_cards = combo_define.two_pairs(all_pairs=ps_cards)
+        st_cards = combo_define.three_of_a_kind(all_pairs=ps_cards)
+        fh_cards = combo_define.full_house(all_pairs=ps_cards)
+        fk_cards = combo_define.four_of_a_kind(all_pairs=ps_cards)
+        s_cards = combo_define.straight(card_list=mix_cards_vocab)
+        f_cards = combo_define.flash(card_list=mix_cards_vocab)
+        sf_cards = combo_define.straight_flash(flash_list=f_cards)
+        rf_cards = combo_define.royal_flash(flash_list=f_cards, straight_flash_list=sf_cards)
+
+        print('mix_card:', mix_cards_vocab)
+        print('one_pair:', op_cards)
+        print('two_pairs:', tp_cards)
+        print('three_of_a_kind:', st_cards)
+        print('full_house:', fh_cards)
+        print('four_of_a_kind:', fk_cards)
+        print('straight:', s_cards)
+        print('flash:', f_cards)
+        print('straight_flash:', sf_cards)
+        print('royal_flash:', rf_cards)

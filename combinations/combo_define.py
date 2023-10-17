@@ -268,27 +268,3 @@ def pairs(card_list: List[dict]) -> List[dict] | None:
     pairs_cards = [mix_val_sorted[i] for i in range(len(mix_val_sorted)) if val_count_dict[val_sorted[i]] >= 2]
 
     return pairs_cards
-
-
-def check_all_combo(mix_card: List[dict]):
-    ps_cards = pairs(card_list=mix_card)
-    op_cards = one_pair(all_pairs=ps_cards)
-    tp_cards = two_pairs(all_pairs=ps_cards)
-    st_cards = three_of_a_kind(all_pairs=ps_cards)
-    fh_cards = full_house(all_pairs=ps_cards)
-    fk_cards = four_of_a_kind(all_pairs=ps_cards)
-    s_cards = straight(card_list=mix_card)
-    f_cards = flash(card_list=mix_card)
-    sf_cards = straight_flash(flash_list=f_cards)
-    rf_cards = royal_flash(flash_list=f_cards, straight_flash_list=sf_cards)
-
-    print('mix_card:', mix_card)
-    print('one_pair:', op_cards)
-    print('two_pairs:', tp_cards)
-    print('three_of_a_kind:', st_cards)
-    print('full_house:', fh_cards)
-    print('four_of_a_kind:', fk_cards)
-    print('straight:', s_cards)
-    print('flash:', f_cards)
-    print('straight_flash:', sf_cards)
-    print('royal_flash:', rf_cards)
