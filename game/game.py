@@ -72,11 +72,12 @@ class Game:
             'table': self.table,
         }
 
+        first_card_from_deck = self.card_deck[0]
         # создание объекта, добавление его в нужный список
-        new_card = card.Card(card_deck=self.card_deck)
+        new_card = card.Card(first_card_from_deck=first_card_from_deck)
         dict_whose_card[whose_card].add_card(new_card=new_card)
         # удаление разданной карты из колоды
-        Game.remove_card_form_deck(self, dealt_card=new_card.get_to_calc())
+        Game.remove_card_form_deck(self, dealt_card=first_card_from_deck)
 
     def preflop_round(self):
         Game.dealing(self, whose_card='human')
