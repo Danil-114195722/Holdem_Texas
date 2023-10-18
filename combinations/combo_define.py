@@ -32,10 +32,17 @@ def straight_flash(flash_list: List[dict]) -> List[dict] | None:
     if not flash_list:
         return straight_flash_cards
 
+    # если есть туз (номер 14), то добавляем номер 1 (для 2 случая туза)
+    unsorted_value_list = list(map(lambda elem: elem['val'], flash_list))
+    if 14 in unsorted_value_list:
+        flash_list.insert(0, {'val': 1, 'suit': flash_list[unsorted_value_list.index(14)]['suit']})
+
+    flash_vals = list(map(lambda elem: elem['val'], flash_list))
+
     # разделяем значения флеша по 5 в каждый подсписок
     straight_flash_list = [
-        list(map(lambda elem: elem['val'], flash_list))[i - 5:i]
-        for i in range(len(flash_list), 0, -1)
+        flash_vals[i - 5:i]
+        for i in range(len(flash_list), 4, -1)
         if len(flash_list[i - 5:i]) >= 5
     ]
     # выбираем тот подсписок, который содержит последовательность значений
@@ -57,34 +64,29 @@ def flash(card_list: List[dict]) -> List[dict] | None:
     flash_cards = None
 
     # card_list = [
-    #     {'val': 13, 'suit': 'A'},
-    #     {'val': 14, 'suit': 'C'},
+    #     {'val': 10, 'suit': 'C'},
+    #     {'val': 9, 'suit': 'C'},
     #     {'val': 7, 'suit': 'C'},
     #     {'val': 6, 'suit': 'C'},
-    #     {'val': 6, 'suit': 'B'},
-    #     {'val': 5, 'suit': 'C'},
-    #     {'val': 11, 'suit': 'C'},
+    #     {'val': 14, 'suit': 'B'},
+    #     {'val': 5, 'suit': 'A'},
+    #     {'val': 8, 'suit': 'C'},
     # ]
 
-    mix_val_sorted, val_sorted = sort_card_mix(card_mix=card_list, column='val')
-    mix_suit_sorted, suit_sorted = sort_card_mix(card_mix=card_list, column='suit')
+    mix_val_sorted = sorted(card_list, key=lambda elem: elem['val'])
+    card_suits = list(map(lambda elem: elem['suit'], card_list))
 
-    # разделяем масти с их кол-вом по спискам
-    list_by_suit = [
-        list(filter(lambda elem: elem == suit_letter, suit_sorted))
-        for suit_letter in ['A', 'B', 'C', 'D']
-        if suit_letter in suit_sorted
-    ]
     # выбираем ту масть, которая содержится в наборе >=5 раз
-    one_suit_to_flash = [elem[0] for elem in list_by_suit if len(elem) >= 5 and len(set(elem)) == 1]
+    suit_to_flash = [
+        suit_letter
+        for suit_letter in ['A', 'B', 'C', 'D']
+        if card_suits.count(suit_letter) >= 5
+    ]
 
-    # если какая-то масть содержится в наборе >=5 раз
-    if one_suit_to_flash:
-        # список с картами флеша
-        flash_cards = list(filter(lambda elem: elem['suit'] == one_suit_to_flash[0], mix_val_sorted))
+    # если какая-то масть содержится в наборе >=5 раз, то выбираем список с картами флеша
+    if suit_to_flash:
+        flash_cards = list(filter(lambda elem: elem['suit'] == suit_to_flash[0], mix_val_sorted))
 
-    # print('AAA mix_val_sorted', mix_val_sorted)
-    # print('AAA flash_cards', flash_cards)
     return flash_cards
 
 
@@ -93,15 +95,15 @@ def straight(card_list: List[dict]) -> List[dict] | None:
     straight_cards = None
 
     card_list = card_list.copy()
-    # card_list = [
-    #     {'val': 5, 'suit': 'C'},
-    #     {'val': 6, 'suit': 'A'},
-    #     {'val': 5, 'suit': 'B'},
-    #     {'val': 5, 'suit': 'B'},
-    #     {'val': 7, 'suit': 'B'},
-    #     {'val': 4, 'suit': 'D'},
-    #     {'val': 3, 'suit': 'B'},
-    # ]
+    card_list = [
+        {'val': 5, 'suit': 'C'},
+        {'val': 6, 'suit': 'A'},
+        {'val': 5, 'suit': 'B'},
+        {'val': 5, 'suit': 'B'},
+        {'val': 7, 'suit': 'B'},
+        {'val': 4, 'suit': 'D'},
+        {'val': 3, 'suit': 'B'},
+    ]
 
     # если есть туз (номер 14), то добавляем номер 1 (для 2 случая туза)
     unsorted_value_list = list(map(lambda elem: elem['val'], card_list))
