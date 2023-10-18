@@ -32,8 +32,18 @@ class Player:
     def combo_definition(self, table: List[Card]):
         # список объектов
         mix_cards = self.cards + table
-        # список словарей карт
-        mix_cards_vocab = [calc_card.get_to_calc() for calc_card in mix_cards]
+        # отсортированный список словарей карт
+        mix_cards_vocab = sorted([calc_card.get_to_calc() for calc_card in mix_cards], key=lambda elem: elem['val'])
+
+        # mix_cards_vocab = [
+        #     {'val': 2, 'suit': 'C'},
+        #     {'val': 9, 'suit': 'C'},
+        #     {'val': 10, 'suit': 'C'},
+        #     {'val': 11, 'suit': 'C'},
+        #     {'val': 12, 'suit': 'C'},
+        #     {'val': 13, 'suit': 'C'},
+        #     {'val': 14, 'suit': 'C'},
+        # ]
 
         high_cards = sorted([calc_card.get_to_calc() for calc_card in self.cards], key=lambda elem: elem['val'])
         ps_cards = combo_define.pairs(card_list=mix_cards_vocab)
@@ -45,8 +55,9 @@ class Player:
         s_cards = combo_define.straight(card_list=mix_cards_vocab)
         f_cards = combo_define.flash(card_list=mix_cards_vocab)
         sf_cards = combo_define.straight_flash(flash_list=f_cards)
-        rf_cards = combo_define.royal_flash(flash_list=f_cards, straight_flash_list=sf_cards)
+        rf_cards = combo_define.royal_flash(straight_flash_list=sf_cards)
 
+        print(mix_cards_vocab)
         print('high_card:', high_cards)
         print('one_pair:', op_cards)
         print('two_pairs:', tp_cards)

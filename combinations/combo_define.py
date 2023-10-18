@@ -10,51 +10,24 @@ def sort_card_mix(card_mix: List[dict], column: str) -> Tuple[List[dict], List[i
     return mix_sorted, column_sorted
 
 
-def royal_flash(flash_list: List[dict], straight_flash_list: List[dict]) -> List[dict] | None:
+def royal_flash(straight_flash_list: List[dict]) -> List[dict] | None:
     """Определение наличия роял флеша"""
     royal_flash_cards = None
 
-    if not (flash_list and straight_flash_list):
+    if not straight_flash_list:
         return royal_flash_cards
 
     # если среди флеша есть наивысший стрит
     if list(range(10, 15)) == list(map(lambda elem: elem['val'], straight_flash_list)):
         # список с картами роял флеша
-        royal_flash_cards = list(filter(lambda elem: elem['val'] in range(10, 15), flash_list))
+        royal_flash_cards = straight_flash_list
 
     return royal_flash_cards
 
 
 def straight_flash(flash_list: List[dict]) -> List[dict] | None:
     """Определение наличия стрит флеша"""
-    straight_flash_cards = None
-
-    if not flash_list:
-        return straight_flash_cards
-
-    # если есть туз (номер 14), то добавляем номер 1 (для 2 случая туза)
-    unsorted_value_list = list(map(lambda elem: elem['val'], flash_list))
-    if 14 in unsorted_value_list:
-        flash_list.insert(0, {'val': 1, 'suit': flash_list[unsorted_value_list.index(14)]['suit']})
-
-    flash_vals = list(map(lambda elem: elem['val'], flash_list))
-
-    # разделяем значения флеша по 5 в каждый подсписок
-    straight_flash_list = [
-        flash_vals[i - 5:i]
-        for i in range(len(flash_list), 4, -1)
-        if len(flash_list[i - 5:i]) >= 5
-    ]
-    # выбираем тот подсписок, который содержит последовательность значений
-    straight_in_flash = [elem for elem in straight_flash_list if elem == list(range(elem[0], elem[0] + 5))]
-
-    # если среди флеша есть стрит
-    if straight_in_flash:
-        first_value = straight_in_flash[0][0]
-        # список с картами стрит флеша
-        straight_flash_cards = list(filter(
-            lambda elem: elem['val'] in range(first_value, first_value + 5),
-            flash_list))
+    straight_flash_cards = straight(card_list=flash_list)
 
     return straight_flash_cards
 
@@ -62,16 +35,6 @@ def straight_flash(flash_list: List[dict]) -> List[dict] | None:
 def flash(card_list: List[dict]) -> List[dict] | None:
     """Определение наличия флеша"""
     flash_cards = None
-
-    # card_list = [
-    #     {'val': 10, 'suit': 'C'},
-    #     {'val': 9, 'suit': 'C'},
-    #     {'val': 7, 'suit': 'C'},
-    #     {'val': 6, 'suit': 'C'},
-    #     {'val': 14, 'suit': 'B'},
-    #     {'val': 5, 'suit': 'A'},
-    #     {'val': 8, 'suit': 'C'},
-    # ]
 
     mix_val_sorted = sorted(card_list, key=lambda elem: elem['val'])
     card_suits = list(map(lambda elem: elem['suit'], card_list))
@@ -94,21 +57,17 @@ def straight(card_list: List[dict]) -> List[dict] | None:
     """Определение наличия стрита"""
     straight_cards = None
 
-    sorted_card_list = sorted(card_list, key=lambda elem: elem['val'])
+    # явное копирование списка, чтобы в главном ничего не поменялось при добавлении номера 1
+    card_list = card_list.copy()
+    # если есть туз (номер 14), то добавляем номер 1 (для второго случая туза)
+    if card_list[-1]['val'] == 14:
+        card_list.insert(0, {'val': 1, 'suit': card_list[-1]['suit']})
 
-    # если есть туз (номер 14), то добавляем номер 1 (для 2 случая туза)
-    if sorted_card_list[-1]['val'] == 14:
-        sorted_card_list.insert(0, {'val': 1, 'suit': sorted_card_list[-1]['suit']})
-
-    without_dupls = [sorted_card_list[i] for i in range(len(sorted_card_list)) if sorted_card_list[i]['val'] != sorted_card_list[i - 1]['val']]
-    mix_val_sorted, val_sorted = sort_card_mix(card_mix=without_dupls, column='val')
+    without_dupls = [card_list[i] for i in range(len(card_list)) if card_list[i]['val'] != card_list[i - 1]['val']]
+    val_sorted = list(map(lambda elem: elem['val'], without_dupls))
 
     # определяем список без дубликатов и разделяем уникальные значения по 5 в каждый подсписок
-    seq_list = [
-        val_sorted[i - 5:i]
-        for i in range(len(val_sorted), 0, -1)
-        if len(val_sorted[i - 5:i]) == 5
-    ]
+    seq_list = [val_sorted[i - 5:i] for i in range(len(val_sorted), 4, -1)]
     # выбираем тот подсписок, который содержит последовательность значений
     straight_list = [elem for elem in seq_list if elem == list(range(elem[0], elem[0] + 5))]
 
@@ -116,9 +75,7 @@ def straight(card_list: List[dict]) -> List[dict] | None:
     if straight_list:
         first_value = straight_list[0][0]
         # список с картами стрита
-        straight_cards = list(filter(
-            lambda elem: elem['val'] in range(first_value, first_value + 5),
-            mix_val_sorted))
+        straight_cards = [elem for elem in without_dupls if elem['val'] in range(first_value, first_value + 5)]
 
     return straight_cards
 
@@ -229,8 +186,7 @@ def pairs(card_list: List[dict]) -> List[dict] | None:
     """Определение наличия всех пар, сетов и каре"""
     pairs_cards = None
 
-    mix_val_sorted, val_sorted = sort_card_mix(card_mix=card_list, column='val')
-
+    val_sorted = list(map(lambda elem: elem['val'], card_list))
     # словарь "значение карты: кол-во в миксе"
     val_count_dict = {elem: val_sorted.count(elem) for elem in list(set(val_sorted))}
 
@@ -239,6 +195,6 @@ def pairs(card_list: List[dict]) -> List[dict] | None:
         return pairs_cards
 
     # выбираем все пары, сеты и каре
-    pairs_cards = [mix_val_sorted[i] for i in range(len(mix_val_sorted)) if val_count_dict[val_sorted[i]] >= 2]
+    pairs_cards = [card_list[i] for i in range(len(card_list)) if val_count_dict[val_sorted[i]] >= 2]
 
     return pairs_cards
