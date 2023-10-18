@@ -94,30 +94,20 @@ def straight(card_list: List[dict]) -> List[dict] | None:
     """Определение наличия стрита"""
     straight_cards = None
 
-    card_list = card_list.copy()
-    card_list = [
-        {'val': 5, 'suit': 'C'},
-        {'val': 6, 'suit': 'A'},
-        {'val': 5, 'suit': 'B'},
-        {'val': 5, 'suit': 'B'},
-        {'val': 7, 'suit': 'B'},
-        {'val': 4, 'suit': 'D'},
-        {'val': 3, 'suit': 'B'},
-    ]
+    sorted_card_list = sorted(card_list, key=lambda elem: elem['val'])
 
     # если есть туз (номер 14), то добавляем номер 1 (для 2 случая туза)
-    unsorted_value_list = list(map(lambda elem: elem['val'], card_list))
-    if 14 in unsorted_value_list:
-        card_list.insert(0, {'val': 1, 'suit': card_list[unsorted_value_list.index(14)]['suit']})
+    if sorted_card_list[-1]['val'] == 14:
+        sorted_card_list.insert(0, {'val': 1, 'suit': sorted_card_list[-1]['suit']})
 
-    mix_val_sorted, val_sorted = sort_card_mix(card_mix=card_list, column='val')
+    without_dupls = [sorted_card_list[i] for i in range(len(sorted_card_list)) if sorted_card_list[i]['val'] != sorted_card_list[i - 1]['val']]
+    mix_val_sorted, val_sorted = sort_card_mix(card_mix=without_dupls, column='val')
 
     # определяем список без дубликатов и разделяем уникальные значения по 5 в каждый подсписок
-    without_dupls = list(set(val_sorted))
     seq_list = [
-        without_dupls[i - 5:i]
-        for i in range(len(without_dupls), 0, -1)
-        if len(without_dupls[i - 5:i]) >= 5
+        val_sorted[i - 5:i]
+        for i in range(len(val_sorted), 0, -1)
+        if len(val_sorted[i - 5:i]) == 5
     ]
     # выбираем тот подсписок, который содержит последовательность значений
     straight_list = [elem for elem in seq_list if elem == list(range(elem[0], elem[0] + 5))]
@@ -129,14 +119,6 @@ def straight(card_list: List[dict]) -> List[dict] | None:
         straight_cards = list(filter(
             lambda elem: elem['val'] in range(first_value, first_value + 5),
             mix_val_sorted))
-
-        # если есть дублирующие карты стрита
-        if len(straight_cards) > 5:
-            straight_cards = [
-                straight_cards[i]
-                for i in range(len(straight_cards))
-                if straight_cards[i]['val'] != straight_cards[i - 1]['val']
-            ]
 
     return straight_cards
 
@@ -246,16 +228,6 @@ def one_pair(all_pairs: List[dict]) -> List[dict] | None:
 def pairs(card_list: List[dict]) -> List[dict] | None:
     """Определение наличия всех пар, сетов и каре"""
     pairs_cards = None
-
-    # card_list = [
-    #     {'val': 7, 'suit': 'C'},
-    #     {'val': 6, 'suit': 'A'},
-    #     {'val': 9, 'suit': 'B'},
-    #     {'val': 7, 'suit': 'B'},
-    #     {'val': 2, 'suit': 'B'},
-    #     {'val': 7, 'suit': 'D'},
-    #     {'val': 2, 'suit': 'B'},
-    # ]
 
     mix_val_sorted, val_sorted = sort_card_mix(card_mix=card_list, column='val')
 
