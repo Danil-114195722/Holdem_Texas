@@ -1,13 +1,4 @@
-from typing import List, Tuple
-
-
-# сортировка микса карт
-def sort_card_mix(card_mix: List[dict], column: str) -> Tuple[List[dict], List[int]]:
-    # сортировка
-    mix_sorted = sorted(card_mix, key=lambda elem: elem[column])
-    column_sorted = list(map(lambda elem: elem[column], mix_sorted))
-
-    return mix_sorted, column_sorted
+from typing import List
 
 
 def royal_flash(straight_flash_list: List[dict]) -> List[dict] | None:
@@ -56,6 +47,9 @@ def flash(card_list: List[dict]) -> List[dict] | None:
 def straight(card_list: List[dict]) -> List[dict] | None:
     """Определение наличия стрита"""
     straight_cards = None
+
+    if not card_list:
+        return straight_cards
 
     # явное копирование списка, чтобы в главном ничего не поменялось при добавлении номера 1
     card_list = card_list.copy()

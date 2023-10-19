@@ -1,11 +1,27 @@
-from typing import List
+from typing import List, Tuple
 from random import shuffle
 
 from cards import card
 from players import human, comp, table
 
+from outputting.printing import print_table, print_round
+
 
 class Game:
+    # список комбинаций
+    combo_name_vocab = {
+        0: 'HIGH CARD',
+        1: 'ONE PAIR',
+        2: 'TWO PAIRS',
+        3: 'THREE OF A KIND',
+        4: 'STRAIGHT',
+        5: 'FLASH',
+        6: 'FULL HOUSE',
+        7: 'FOUR OF A KIND',
+        8: 'STRAIGHT FLASH',
+        9: 'ROYAL FLASH',
+    }
+
     def __init__(self):
         # игровые данные
         self.finished_games = 0
@@ -28,42 +44,6 @@ class Game:
     def remove_card_form_deck(self, dealt_card: dict):
         self.card_deck.remove(dealt_card)
 
-    def print_table(self, show_comp: bool = False):
-        # кол-во разделителя
-        delimiter_count = 30
-
-        human_beauty_cards = [card_obj.get_to_print() for card_obj in self.human.cards]
-        table_beauty_cards = [card_obj.get_to_print() for card_obj in self.table.cards]
-
-        # стили текста
-        blue_bold_text = "\033[1m\033[34m"
-        italic_text = "\033[3m"
-        red_italic_text = "\033[3m\033[31m"
-        clean_text = "\033[0m"
-
-        # печать карт компа
-        print(f"{blue_bold_text}{'COMP'.center(delimiter_count, '-')}{clean_text}" + '\n')
-        if show_comp:
-            comp_beauty_cards = [card_obj.get_to_print() for card_obj in self.comp.cards]
-            print(f"{italic_text}{' '.join(comp_beauty_cards).center(delimiter_count, ' ')}{clean_text}" + '\n')
-        else:
-            print(f"{red_italic_text}{'$$$ $$$'.center(delimiter_count, ' ')}{clean_text}" + '\n')
-
-        # печать карт стола
-        print(f"{blue_bold_text}{'TABLE'.center(delimiter_count, '-')}\033[0m" + '\n')
-        if table_beauty_cards:
-            print(f"{italic_text}{' '.join(table_beauty_cards).center(delimiter_count, ' ')}{clean_text}" + '\n')
-        else:
-            print()
-
-        # печать карт человека
-        print(f"{blue_bold_text}{'HUMAN'.center(delimiter_count, '-')}\033[0m" + '\n')
-        print(f"{italic_text}{' '.join(human_beauty_cards).center(delimiter_count, ' ')}{clean_text}" + '\n')
-        print(f"\033[1m\033[34m{'-' * delimiter_count}\033[0m")
-
-    def print_money(self):
-        pass
-
     # раздача новой карты
     def dealing(self, whose_card: str):
         dict_whose_card = {
@@ -79,49 +59,118 @@ class Game:
         # удаление разданной карты из колоды
         Game.remove_card_form_deck(self, dealt_card=first_card_from_deck)
 
+    def winner_definition(self) -> Tuple[str, Tuple[int, list], Tuple[int, list]]:
+        best_human = None
+        best_comp = None
+        winner = None
+
+        # словари со всеми комбинациями
+        human_combo = self.human.combo_definition(table=self.table.cards)
+        comp_combo = self.comp.combo_definition(table=self.table.cards)
+
+        # собираем в списки все найденные комбинации
+        human_combos = [(num, human_combo[num]) for num in range(9, -1, -1) if human_combo[num]]
+        comp_combos = [(num, comp_combo[num]) for num in range(9, -1, -1) if comp_combo[num]]
+
+        for i in range(min(len(human_combos), len(comp_combos))):
+            # для выхода из внешнего цикла через внутренний
+            outer_break = False
+
+            cur_human_combo, cur_comp_combo = human_combos[i], comp_combos[i]
+            # проверка разницы комбинаций
+            if cur_human_combo[0] != cur_comp_combo[0]:
+                best_human, best_comp = cur_human_combo, cur_comp_combo
+                winner = 'human' if cur_human_combo[0] > cur_comp_combo[0] else 'comp'
+                break
+
+            # проверка разницы карт в одинаковых комбинациях
+            for inner_i in range(len(cur_human_combo[1]) - 1, -1, -1):
+                human_card_val, comp_card_val = cur_human_combo[1][inner_i]['val'], cur_comp_combo[1][inner_i]['val']
+                if human_card_val != comp_card_val:
+                    best_human, best_comp = cur_human_combo, cur_comp_combo
+                    winner = 'human' if human_card_val > comp_card_val else 'comp'
+                    outer_break = True
+                    break
+
+            if outer_break:
+                break
+
+        return winner, best_human, best_comp
+
     def preflop_round(self):
         Game.dealing(self, whose_card='human')
         Game.dealing(self, whose_card='comp')
         Game.dealing(self, whose_card='human')
         Game.dealing(self, whose_card='comp')
 
-        # Game.print_table(self)
+        # print_table(
+        #     human_cards=self.human.cards,
+        #     table_cards=self.table.cards,
+        # )
+        # winner, human_cards, comp_cards = Game.winner_definition(self)
+        # print(winner)
+        # print(human_cards)
+        # print(comp_cards)
 
     def flop_round(self):
         Game.dealing(self, whose_card='table')
         Game.dealing(self, whose_card='table')
         Game.dealing(self, whose_card='table')
 
-        # Game.print_table(self)
+        # print_table(
+        #     human_cards=self.human.cards,
+        #     table_cards=self.table.cards,
+        # )
+        # winner, human_cards, comp_cards = Game.winner_definition(self)
+        # print(winner)
+        # print(human_cards)
+        # print(comp_cards)
 
     def tern_round(self):
         Game.dealing(self, whose_card='table')
 
-        # Game.print_table(self)
+        # print_table(
+        #     human_cards=self.human.cards,
+        #     table_cards=self.table.cards,
+        # )
+        # winner, human_cards, comp_cards = Game.winner_definition(self)
+        # print(winner)
+        # print(human_cards)
+        # print(comp_cards)
 
     def river_round(self):
         Game.dealing(self, whose_card='table')
 
-        # Game.print_table(self)
+        # print_table(
+        #     human_cards=self.human.cards,
+        #     table_cards=self.table.cards,
+        # )
+        # winner, human_cards, comp_cards = Game.winner_definition(self)
+        # print(winner)
+        # print(human_cards)
+        # print(comp_cards)
 
     def showdown_round(self):
-        Game.print_table(self, show_comp=True)
-        self.human.combo_definition(table=self.table.cards)
+        print_table(
+            human_cards=self.human.cards,
+            table_cards=self.table.cards,
+            comp_cards=self.comp.cards,
+        )
+        winner, human_cards, comp_cards = Game.winner_definition(self)
+        print(winner)
+        print(human_cards)
+        print(comp_cards)
 
     # запуск игры
     def start(self):
         if self.game:
-            # стили текста
-            yellow_bold_text = "\033[1m\033[33m"
-            clean_text = "\033[0m"
-
-            print('\n\n' + f'{yellow_bold_text}PREFLOP{clean_text}' + '\n\n')
+            print_round(round_name='PREFLOP')
             Game.preflop_round(self)
-            print('\n\n' + f'{yellow_bold_text}FLOP{clean_text}' + '\n\n')
+            print_round(round_name='FLOP')
             Game.flop_round(self)
-            print('\n\n' + f'{yellow_bold_text}TERN{clean_text}' + '\n\n')
+            print_round(round_name='TERN')
             Game.tern_round(self)
-            print('\n\n' + f'{yellow_bold_text}RIVER{clean_text}' + '\n\n')
+            print_round(round_name='RIVER')
             Game.river_round(self)
-            print('\n\n' + f'{yellow_bold_text}SHOWDOWN{clean_text}' + '\n\n')
+            print_round(round_name='SHOWDOWN')
             Game.showdown_round(self)
