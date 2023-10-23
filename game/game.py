@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from random import shuffle
+from random import shuffle as random_shuffle
 
 from cards import card
 from players import human, comp, table
@@ -22,20 +22,20 @@ class Game:
         9: 'ROYAL FLASH',
     }
 
-    def __init__(self, first_stack: str):
+    def __init__(self):
         # игровые данные
         self.finished_games = 0
         self.game = True
-        self.first_stack = first_stack
+        self.first_stack = 'human'
 
         # объекты игроков и стола
         self.human = human.Human()
-        self.comp = comp.Comp()
+        self.comp = comp.Comp(sleep_time=0.5)
         self.table = table.Table()
 
         # создание колоды и её перемешивание
         self.card_deck = sum([[{'val': num, 'suit': suit} for num in range(2, 15)] for suit in ['A', 'B', 'C', 'D']], [])
-        shuffle(self.card_deck)
+        random_shuffle(self.card_deck)
 
     # возвращает текущую колоду карт
     def get_card_deck(self) -> List[dict]:
@@ -59,6 +59,64 @@ class Game:
         dict_whose_card[whose_card].add_card(new_card=new_card)
         # удаление разданной карты из колоды
         Game.remove_card_form_deck(self, dealt_card=first_card_from_deck)
+
+    def do_bets(self, winner, human_cards, comp_cards):
+        if self.first_stack == 'human':
+            # ставка человека
+            self.human.bet(comp=self.comp)
+
+        # ставка компа
+        self.comp.bet(human=self.human, winner=winner, human_combo=human_cards, comp_combo=comp_cards)
+
+        if self.first_stack == 'comp':
+            # ставка человека
+            self.human.bet(comp=self.comp)
+
+        # пока не выполняется равенство ставок или фолд
+        while not (self.comp.cur_bet == self.human.cur_bet or 'fold' in [self.human.bet_status, self.comp.bet_status]):
+            if self.first_stack == 'human':
+                # ставка человека
+                self.human.bet(comp=self.comp)
+
+            # проверка на равенство ставок или фолд
+            if self.comp.cur_bet == self.human.cur_bet or 'fold' in [self.human.bet_status, self.comp.bet_status]:
+                break
+            # ставка компа
+            self.comp.bet(human=self.human, winner=winner, human_combo=human_cards, comp_combo=comp_cards)
+
+            if self.first_stack == 'comp':
+                # ставка человека
+                self.human.bet(comp=self.comp)
+
+    # def do_bets(self, winner, human_cards, comp_cards):
+    #     while True:
+    #         if self.first_stack == 'human':
+    #             # ставка человека
+    #             self.human.bet(comp=self.comp)
+    #             # проверка на равенство ставок
+    #             if ((self.comp.cur_bet == self.human.cur_bet and self.human.cur_bet != 0)
+    #                     or 'fold' in [self.human.bet_status, self.comp.bet_status]):
+    #                 break
+    #
+    #             # ставка компа
+    #             self.comp.bet(human=self.human, winner=winner, human_combo=human_cards, comp_combo=comp_cards)
+    #             # проверка на равенство ставок
+    #             if self.comp.cur_bet == self.human.cur_bet or 'fold' in [self.human.bet_status, self.comp.bet_status]:
+    #                 break
+    #
+    #         elif self.first_stack == 'comp':
+    #             # ставка компа
+    #             self.comp.bet(human=self.human, winner=winner, human_combo=human_cards, comp_combo=comp_cards)
+    #             # проверка на равенство ставок
+    #             if ((self.comp.cur_bet == self.human.cur_bet and self.comp.cur_bet != 0)
+    #                     or 'fold' in [self.human.bet_status, self.comp.bet_status]):
+    #                 break
+    #
+    #             # ставка человека
+    #             self.human.bet(comp=self.comp)
+    #             # проверка на равенство ставок
+    #             if self.comp.cur_bet == self.human.cur_bet or 'fold' in [self.human.bet_status, self.comp.bet_status]:
+    #                 break
 
     def winner_definition(self) -> Tuple[str, Tuple[int, list], Tuple[int, list]]:
         best_human = None
@@ -115,47 +173,24 @@ class Game:
             table_cards=self.table.cards,
         )
         winner, human_cards, comp_cards = Game.winner_definition(self)
-        print(winner)
-        print(human_cards)
-        print(comp_cards)
+        # print(winner)
+        # print(human_cards)
+        # print(comp_cards)
 
-        human_cur_bet = self.human.bet(comp_bet=self.comp.cur_bet)
-        comp_cur_bet = self.comp.bet(
-            human_bet=self.human.cur_bet,
+        Game.do_bets(
+            self,
             winner=winner,
-            human_combo=human_cards,
-            comp_combo=comp_cards,
+            human_cards=human_cards,
+            comp_cards=comp_cards,
         )
 
-        print('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
-        print('human.cur_bet', human_cur_bet)
-        print('comp.cur_bet', comp_cur_bet)
+        print('\nHuman', self.human.cur_bet, self.human.bet_status)
+        print('Comp', self.comp.cur_bet, self.comp.bet_status)
 
     def flop_round(self):
         Game.dealing(self, whose_card='table')
         Game.dealing(self, whose_card='table')
         Game.dealing(self, whose_card='table')
-
-        print_table(
-            human_cards=self.human.cards,
-            table_cards=self.table.cards,
-        )
-        winner, human_cards, comp_cards = Game.winner_definition(self)
-        print(winner)
-        print(human_cards)
-        print(comp_cards)
-
-        human_cur_bet = self.human.bet(comp_bet=self.comp.cur_bet)
-        comp_cur_bet = self.comp.bet(
-            human_bet=self.human.cur_bet,
-            winner=winner,
-            human_combo=human_cards,
-            comp_combo=comp_cards,
-        )
-
-        print('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
-        print('human.cur_bet', human_cur_bet)
-        print('comp.cur_bet', comp_cur_bet)
 
     def tern_round(self):
         Game.dealing(self, whose_card='table')
@@ -171,8 +206,8 @@ class Game:
         if self.game:
             print_round(round_name='PREFLOP')
             Game.preflop_round(self)
-            print_round(round_name='FLOP')
-            Game.flop_round(self)
+            # print_round(round_name='FLOP')
+            # Game.flop_round(self)
             # print_round(round_name='TERN')
             # Game.tern_round(self)
             # print_round(round_name='RIVER')
