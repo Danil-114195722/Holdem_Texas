@@ -9,6 +9,8 @@ class Player:
         self.cards = []
         self.money = 1000
         self.cur_bet = 0
+        # in_game/fold/all_in
+        self.bet_status = 'in_game'
 
     def add_card(self, new_card: object):
         self.cards.append(new_card)
