@@ -1,17 +1,31 @@
+from time import sleep
 from random import randint
 from typing import Tuple
 
 from players.player import Player
+from outputting.printing import print_comp_fold
 
 
 class Comp(Player):
-    def __init__(self):
+    def __init__(self, sleep_time) -> None:
         super().__init__()
+        # время сна перед ставкой компа
+        self.sleep_time = sleep_time
 
-    def bet(self, human_bet: int, winner: str, human_combo: Tuple[int, list], comp_combo: Tuple[int, list]) -> Tuple[int, str]:
-        # in_game/fold/all_in
-        in_game_state = 'in_game'
+    # сделать ставку компа (human: object players.human.Human)
+    def bet(self, human, winner: str, human_combo: Tuple[int, list], comp_combo: Tuple[int, list]) -> None:
+        sleep(self.sleep_time)
         adding_money = 0
+
+        # если у человека фолд, то не повышаем ставку компа
+        if human.bet_status == 'fold':
+            self.bet_status = 'in_game'
+            return
+        # если у человека олл ин
+        elif human.bet_status == 'all_in':
+            self.cur_bet = self.money if human.cur_bet > self.money else human.cur_bet
+            self.bet_status = 'in_game'
+            return
 
         # номер комбинации человека и компа
         num_com_h, num_com_c = human_combo[0], comp_combo[0]
@@ -29,18 +43,21 @@ class Comp(Player):
             elif winner == 'draw' and randint(0, 9) >= 8:
                 adding_money += 5
             elif winner == 'human' and randint(0, 9) >= 8:
-                in_game_state = 'fold'
+                self.bet_status = 'fold'
+                # печать фолда компа
+                print_comp_fold()
+                return
 
         if adding_money >= 10:
             # делаем разброс значений для добавления к ставке человека и берём рандомное число оттуда
-            new_comp_bet = human_bet + abs(randint(adding_money - 10, adding_money + 10))
+            self.cur_bet = human.cur_bet + abs(randint(adding_money - 10, adding_money + 10))
         else:
-            new_comp_bet = human_bet + adding_money
+            self.cur_bet = human.cur_bet + adding_money
 
         # если итоговая ставка компа превышает его кол-во денег, то снижаем ставку до его кол-ва денег
-        if new_comp_bet >= self.money:
-            in_game_state = 'all_in'
-            new_comp_bet = self.money
+        if self.cur_bet >= self.money and self.bet_status != 'fold':
+            self.bet_status = 'all_in'
+            self.cur_bet = self.money
 
-        self.cur_bet = new_comp_bet
-        return new_comp_bet, in_game_state
+        # печать ставки компа
+        print(f'Ставка компьютера: {self.cur_bet}')

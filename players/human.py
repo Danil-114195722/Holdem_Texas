@@ -1,39 +1,41 @@
 from players.player import Player
-
 from outputting.printing import print_invalid_bet
+from outputting.text_styles import yellow_bold_text, clean_text
 
 
 class Human(Player):
     def __init__(self):
         super().__init__()
 
-    # сделать ставку
-    def bet(self, comp_bet: int) -> int:
+    # сделать ставку (human: object players.comp.Comp)
+    def bet(self, comp) -> None:
         # in_game/fold/all_in
-        in_game_state = 'in_game'
-        new_human_bet = self.cur_bet
+        self.bet_status = 'in_game'
+
+        # если у компа фолд, то не повышаем ставку человека
+        if comp.bet_status == 'fold':
+            return {'bet': self.cur_bet, 'status': 'in_game'}
 
         while True:
             try:
                 # ставка человека (кроме числа может быть "пас" или "fold")
-                new_human_bet_row = input('Ваша ставка: ')
-                new_human_bet = int(new_human_bet_row)
+                new_human_bet_row = input(f'{yellow_bold_text}Ваша ставка: {clean_text}')
+                self.cur_bet = int(new_human_bet_row)
                 # если ставка человека меньше ставки компа или больше чем общее кол-во денег человека
-                if not (comp_bet <= new_human_bet <= self.money):
+                if not (comp.cur_bet <= self.cur_bet <= self.money):
                     raise ValueError('int not in range')
                 break
 
             except ValueError:
                 # если фолд
-                if new_human_bet_row in ['пас', 'fold']:
-                    in_game_state = 'fold'
+                if new_human_bet_row.lower() in ['пас', 'fold']:
+                    self.bet_status = 'fold'
                     break
                 else:
                     print_invalid_bet()
 
         # если ставка равна кол-ву всех денег человека
-        if new_human_bet == self.money:
-            in_game_state = 'all_in'
+        if self.cur_bet == self.money:
+            self.bet_status = 'all_in'
 
-        self.cur_bet = new_human_bet
-        return new_human_bet, in_game_state
+        return {'bet': self.cur_bet, 'status': self.bet_status}
