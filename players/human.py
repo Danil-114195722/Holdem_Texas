@@ -9,13 +9,31 @@ class Human(Player):
 
     # сделать ставку
     def bet(self, comp_bet: int) -> int:
+        # in_game/fold/all_in
+        in_game_state = 'in_game'
+        new_human_bet = self.cur_bet
+
         while True:
             try:
-                cur_human_bet = int(input('Ваша ставка: '))
-                if not (comp_bet <= cur_human_bet <= self.money):
+                # ставка человека (кроме числа может быть "пас" или "fold")
+                new_human_bet_row = input('Ваша ставка: ')
+                new_human_bet = int(new_human_bet_row)
+                # если ставка человека меньше ставки компа или больше чем общее кол-во денег человека
+                if not (comp_bet <= new_human_bet <= self.money):
                     raise ValueError('int not in range')
                 break
-            except ValueError:
-                print_invalid_bet()
 
-        return cur_human_bet
+            except ValueError:
+                # если фолд
+                if new_human_bet_row in ['пас', 'fold']:
+                    in_game_state = 'fold'
+                    break
+                else:
+                    print_invalid_bet()
+
+        # если ставка равна кол-ву всех денег человека
+        if new_human_bet == self.money:
+            in_game_state = 'all_in'
+
+        self.cur_bet = new_human_bet
+        return new_human_bet, in_game_state

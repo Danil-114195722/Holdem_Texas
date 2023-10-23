@@ -22,10 +22,11 @@ class Game:
         9: 'ROYAL FLASH',
     }
 
-    def __init__(self):
+    def __init__(self, first_stack: str):
         # игровые данные
         self.finished_games = 0
         self.game = True
+        self.first_stack = first_stack
 
         # объекты игроков и стола
         self.human = human.Human()
@@ -62,6 +63,7 @@ class Game:
     def winner_definition(self) -> Tuple[str, Tuple[int, list], Tuple[int, list]]:
         best_human = None
         best_comp = None
+        # human/comp/draw
         winner = None
 
         # словари со всеми комбинациями
@@ -95,6 +97,11 @@ class Game:
             if outer_break:
                 break
 
+        # если победитель не определился
+        if not winner:
+            winner = 'draw'
+            best_human, best_comp = human_combos[-1], comp_combos[-1]
+
         return winner, best_human, best_comp
 
     def preflop_round(self):
@@ -103,63 +110,61 @@ class Game:
         Game.dealing(self, whose_card='human')
         Game.dealing(self, whose_card='comp')
 
-        # print_table(
-        #     human_cards=self.human.cards,
-        #     table_cards=self.table.cards,
-        # )
-        # winner, human_cards, comp_cards = Game.winner_definition(self)
-        # print(winner)
-        # print(human_cards)
-        # print(comp_cards)
+        print_table(
+            human_cards=self.human.cards,
+            table_cards=self.table.cards,
+        )
+        winner, human_cards, comp_cards = Game.winner_definition(self)
+        print(winner)
+        print(human_cards)
+        print(comp_cards)
+
+        human_cur_bet = self.human.bet(comp_bet=self.comp.cur_bet)
+        comp_cur_bet = self.comp.bet(
+            human_bet=self.human.cur_bet,
+            winner=winner,
+            human_combo=human_cards,
+            comp_combo=comp_cards,
+        )
+
+        print('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
+        print('human.cur_bet', human_cur_bet)
+        print('comp.cur_bet', comp_cur_bet)
 
     def flop_round(self):
         Game.dealing(self, whose_card='table')
         Game.dealing(self, whose_card='table')
         Game.dealing(self, whose_card='table')
 
-        # print_table(
-        #     human_cards=self.human.cards,
-        #     table_cards=self.table.cards,
-        # )
-        # winner, human_cards, comp_cards = Game.winner_definition(self)
-        # print(winner)
-        # print(human_cards)
-        # print(comp_cards)
-
-    def tern_round(self):
-        Game.dealing(self, whose_card='table')
-
-        # print_table(
-        #     human_cards=self.human.cards,
-        #     table_cards=self.table.cards,
-        # )
-        # winner, human_cards, comp_cards = Game.winner_definition(self)
-        # print(winner)
-        # print(human_cards)
-        # print(comp_cards)
-
-    def river_round(self):
-        Game.dealing(self, whose_card='table')
-
-        # print_table(
-        #     human_cards=self.human.cards,
-        #     table_cards=self.table.cards,
-        # )
-        # winner, human_cards, comp_cards = Game.winner_definition(self)
-        # print(winner)
-        # print(human_cards)
-        # print(comp_cards)
-
-    def showdown_round(self):
         print_table(
             human_cards=self.human.cards,
             table_cards=self.table.cards,
-            comp_cards=self.comp.cards,
         )
         winner, human_cards, comp_cards = Game.winner_definition(self)
         print(winner)
         print(human_cards)
         print(comp_cards)
+
+        human_cur_bet = self.human.bet(comp_bet=self.comp.cur_bet)
+        comp_cur_bet = self.comp.bet(
+            human_bet=self.human.cur_bet,
+            winner=winner,
+            human_combo=human_cards,
+            comp_combo=comp_cards,
+        )
+
+        print('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
+        print('human.cur_bet', human_cur_bet)
+        print('comp.cur_bet', comp_cur_bet)
+
+    def tern_round(self):
+        Game.dealing(self, whose_card='table')
+
+    def river_round(self):
+        Game.dealing(self, whose_card='table')
+
+    def showdown_round(self):
+        pass
 
     # запуск игры
     def start(self):
@@ -168,9 +173,9 @@ class Game:
             Game.preflop_round(self)
             print_round(round_name='FLOP')
             Game.flop_round(self)
-            print_round(round_name='TERN')
-            Game.tern_round(self)
-            print_round(round_name='RIVER')
-            Game.river_round(self)
-            print_round(round_name='SHOWDOWN')
-            Game.showdown_round(self)
+            # print_round(round_name='TERN')
+            # Game.tern_round(self)
+            # print_round(round_name='RIVER')
+            # Game.river_round(self)
+            # print_round(round_name='SHOWDOWN')
+            # Game.showdown_round(self)
