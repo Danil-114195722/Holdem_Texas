@@ -1,6 +1,7 @@
 from typing import List
-from cards.card import Card
+from random import choice as random_choice
 
+from cards.card import Card
 from outputting.text_styles import yellow_bold_text, clean_text, blue_bold_text, italic_text, red_italic_text
 
 
@@ -46,6 +47,13 @@ def print_round(round_name: str) -> None:
 
 def print_invalid_bet() -> None:
     print(f'{red_italic_text}НЕВЕРНАЯ СТАВКА!!!{clean_text}')
+
+
+# печать фолда компа
+def print_comp_fold():
+    # печать фолда компа
+    fold_message = random_choice(['ПАС', 'ФОЛД', 'СКИДЫВАЮ КАРТЫ'])
+    print(f'Ставка компьютера: {red_italic_text}{fold_message}{clean_text}')
 
 
 def print_money():
