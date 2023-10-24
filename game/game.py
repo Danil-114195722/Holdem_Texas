@@ -4,29 +4,16 @@ from random import shuffle as random_shuffle
 from cards import card
 from players import human, comp, table
 
-from outputting.printing import print_table, print_round
+from outputting.printing import print_table, print_round, print_money
 
 
 class Game:
-    # список комбинаций
-    combo_name_vocab = {
-        0: 'HIGH CARD',
-        1: 'ONE PAIR',
-        2: 'TWO PAIRS',
-        3: 'THREE OF A KIND',
-        4: 'STRAIGHT',
-        5: 'FLASH',
-        6: 'FULL HOUSE',
-        7: 'FOUR OF A KIND',
-        8: 'STRAIGHT FLASH',
-        9: 'ROYAL FLASH',
-    }
-
     def __init__(self):
         # игровые данные
         self.finished_games = 0
         self.game = True
         self.first_stack = 'human'
+        self.general_bet = 0
 
         # объекты игроков и стола
         self.human = human.Human()
@@ -42,11 +29,11 @@ class Game:
         return self.card_deck
 
     # удаление карты из колоды
-    def remove_card_form_deck(self, dealt_card: dict):
+    def remove_card_form_deck(self, dealt_card: dict) -> None:
         self.card_deck.remove(dealt_card)
 
     # раздача новой карты
-    def dealing(self, whose_card: str):
+    def dealing(self, whose_card: str) -> None:
         dict_whose_card = {
             'human': self.human,
             'comp': self.comp,
@@ -60,7 +47,7 @@ class Game:
         # удаление разданной карты из колоды
         Game.remove_card_form_deck(self, dealt_card=first_card_from_deck)
 
-    def do_bets(self, winner, human_cards, comp_cards):
+    def do_bets(self, winner, human_cards, comp_cards) -> None:
         if self.first_stack == 'human':
             # ставка человека
             self.human.bet(comp=self.comp)
@@ -87,36 +74,6 @@ class Game:
             if self.first_stack == 'comp':
                 # ставка человека
                 self.human.bet(comp=self.comp)
-
-    # def do_bets(self, winner, human_cards, comp_cards):
-    #     while True:
-    #         if self.first_stack == 'human':
-    #             # ставка человека
-    #             self.human.bet(comp=self.comp)
-    #             # проверка на равенство ставок
-    #             if ((self.comp.cur_bet == self.human.cur_bet and self.human.cur_bet != 0)
-    #                     or 'fold' in [self.human.bet_status, self.comp.bet_status]):
-    #                 break
-    #
-    #             # ставка компа
-    #             self.comp.bet(human=self.human, winner=winner, human_combo=human_cards, comp_combo=comp_cards)
-    #             # проверка на равенство ставок
-    #             if self.comp.cur_bet == self.human.cur_bet or 'fold' in [self.human.bet_status, self.comp.bet_status]:
-    #                 break
-    #
-    #         elif self.first_stack == 'comp':
-    #             # ставка компа
-    #             self.comp.bet(human=self.human, winner=winner, human_combo=human_cards, comp_combo=comp_cards)
-    #             # проверка на равенство ставок
-    #             if ((self.comp.cur_bet == self.human.cur_bet and self.comp.cur_bet != 0)
-    #                     or 'fold' in [self.human.bet_status, self.comp.bet_status]):
-    #                 break
-    #
-    #             # ставка человека
-    #             self.human.bet(comp=self.comp)
-    #             # проверка на равенство ставок
-    #             if self.comp.cur_bet == self.human.cur_bet or 'fold' in [self.human.bet_status, self.comp.bet_status]:
-    #                 break
 
     def winner_definition(self) -> Tuple[str, Tuple[int, list], Tuple[int, list]]:
         best_human = None
@@ -163,29 +120,31 @@ class Game:
         return winner, best_human, best_comp
 
     def preflop_round(self):
+        # раздача карт
         Game.dealing(self, whose_card='human')
         Game.dealing(self, whose_card='comp')
         Game.dealing(self, whose_card='human')
         Game.dealing(self, whose_card='comp')
 
-        print_table(
-            human_cards=self.human.cards,
-            table_cards=self.table.cards,
-        )
+        # печать стола и рук игроков
+        print_table(human_cards=self.human.cards, table_cards=self.table.cards)
+
+        # определение комбинаций и победителя на данном этапе
         winner, human_cards, comp_cards = Game.winner_definition(self)
-        # print(winner)
-        # print(human_cards)
-        # print(comp_cards)
 
-        Game.do_bets(
-            self,
-            winner=winner,
-            human_cards=human_cards,
-            comp_cards=comp_cards,
-        )
+        # ставки
+        Game.do_bets(self, winner=winner, human_cards=human_cards, comp_cards=comp_cards)
 
         print('\nHuman', self.human.cur_bet, self.human.bet_status)
         print('Comp', self.comp.cur_bet, self.comp.bet_status)
+
+        # общий банк ставок
+        self.general_bet += self.comp.cur_bet + self.human.cur_bet
+        # вычет текущих ставок игроков из их кол-ва денег и обнуление их текущих ставок
+        self.human.del_bet_from_money()
+        self.comp.del_bet_from_money()
+        # печать денег и ставок
+        print_money(human_money=self.human.money, comp_money=self.comp.money, bet_money=self.general_bet)
 
     def flop_round(self):
         Game.dealing(self, whose_card='table')
