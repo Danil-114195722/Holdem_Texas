@@ -2,7 +2,7 @@ from typing import List
 from random import choice as random_choice
 
 from cards.card import Card
-from outputting.text_styles import yellow_bold_text, clean_text, blue_bold_text, italic_text, red_italic_text
+from outputting.text_styles import yellow_bold_text, clean_text, blue_bold_text, italic_text, red_italic_text, red_bold_text
 
 
 # печать подсказки с правилами игры при запуске проги
@@ -56,5 +56,34 @@ def print_comp_fold():
     print(f'Ставка компьютера: {red_italic_text}{fold_message}{clean_text}')
 
 
-def print_money():
-    pass
+def print_money(human_money: int, comp_money: int, bet_money: int):
+    print('-' * 65)
+    print(
+        '|  ' + f'{blue_bold_text}Банк:{clean_text} {str(bet_money).rjust(4, " ")}',
+        f'{yellow_bold_text}Мои деньги:{clean_text} {str(human_money).rjust(4, " ")}',
+        f'{red_bold_text}Деньги компьютера:{clean_text} {str(comp_money).rjust(4, " ")}' + '  |',
+        sep='  |  '
+    )
+    print('-' * 65)
+
+
+# def print_winner(human_money: int, comp_money: int, bet_money: int):
+#     # список комбинаций
+#     combo_name_vocab = {
+#         0: 'HIGH CARD',
+#         1: 'ONE PAIR',
+#         2: 'TWO PAIRS',
+#         3: 'THREE OF A KIND',
+#         4: 'STRAIGHT',
+#         5: 'FLASH',
+#         6: 'FULL HOUSE',
+#         7: 'FOUR OF A KIND',
+#         8: 'STRAIGHT FLASH',
+#         9: 'ROYAL FLASH',
+#     }
+#     print(
+#         f'{blue_bold_text}Банк:{clean_text} {str(bet_money)}',
+#         f'{yellow_bold_text}мои деньги:{clean_text} {str(human_money)},'
+#         f'{red_bold_text}деньги компьютера:{clean_text} {str(comp_money)}',
+#         sep=' --- '
+#     )
