@@ -7,7 +7,7 @@ from outputting.printing import print_comp_fold
 
 
 class Comp(Player):
-    def __init__(self, sleep_time) -> None:
+    def __init__(self, sleep_time):
         super().__init__()
         # время сна перед ставкой компа
         self.sleep_time = sleep_time
