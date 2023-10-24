@@ -12,11 +12,13 @@ class Player:
         # in_game/fold/all_in
         self.bet_status = 'in_game'
 
-    def add_card(self, new_card: object):
+    def add_card(self, new_card: object) -> None:
         self.cards.append(new_card)
 
-    def get_money_info(self):
-        pass
+    # вычитание ставки из общей суммы денег игрока и обнуление текущей ставки игрока
+    def del_bet_from_money(self) -> None:
+        self.money -= self.cur_bet
+        self.cur_bet = 0
 
     # определение комбинации игрока
     def combo_definition(self, table: List[Card]) -> dict:
