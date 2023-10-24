@@ -1,5 +1,3 @@
-from typing import List
-
 from cards.card import Card
 from combinations import combo_define
 
@@ -21,21 +19,11 @@ class Player:
         self.cur_bet = 0
 
     # определение комбинации игрока
-    def combo_definition(self, table: List[Card]) -> dict:
+    def combo_definition(self, table: list[Card]) -> dict:
         # список объектов
         mix_cards = self.cards + table
         # отсортированный список словарей карт
         mix_cards_vocab = sorted([calc_card.get_to_calc() for calc_card in mix_cards], key=lambda elem: elem['val'])
-
-        # mix_cards_vocab = [
-        #     {'val': 2, 'suit': 'C'},
-        #     {'val': 9, 'suit': 'C'},
-        #     {'val': 10, 'suit': 'C'},
-        #     {'val': 11, 'suit': 'C'},
-        #     {'val': 12, 'suit': 'C'},
-        #     {'val': 13, 'suit': 'C'},
-        #     {'val': 14, 'suit': 'C'},
-        # ]
 
         # все пары, сеты и каре
         all_same_cards = combo_define.pairs(card_list=mix_cards_vocab)

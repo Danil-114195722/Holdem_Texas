@@ -11,8 +11,8 @@ class Card:
         'D': '♣️',
     }
 
-    def __init__(self, first_card_from_deck: dict):
-        self.card_code = first_card_from_deck
+    def __init__(self, card_code: dict):
+        self.card_code = card_code
 
     # возвращает карту в красивом виде для вывода
     def get_to_print(self) -> str:

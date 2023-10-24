@@ -1,6 +1,5 @@
 from time import sleep
 from random import randint
-from typing import Tuple
 
 from players.player import Player
 from outputting.printing import print_comp_fold
@@ -13,7 +12,7 @@ class Comp(Player):
         self.sleep_time = sleep_time
 
     # сделать ставку компа (human: object players.human.Human)
-    def bet(self, human, winner: str, human_combo: Tuple[int, list], comp_combo: Tuple[int, list]) -> None:
+    def bet(self, human, winner: str, human_combo: tuple[int, list], comp_combo: tuple[int, list]) -> None:
         sleep(self.sleep_time)
         adding_money = 0
 
@@ -23,8 +22,17 @@ class Comp(Player):
             return
         # если у человека олл ин
         elif human.bet_status == 'all_in':
-            self.cur_bet = self.money if human.cur_bet > self.money else human.cur_bet
-            self.bet_status = 'in_game'
+            # если человек блефует
+            if (human.cur_bet >= human.money / 2) and (human.cur_bet / 2 >= self.cur_bet):
+                self.bet_status = 'fold'
+                # печать фолда компа
+                print_comp_fold()
+                sleep(2)
+            else:
+                self.cur_bet = self.money if human.cur_bet > self.money else human.cur_bet
+                self.bet_status = 'in_game'
+                # печать ставки компа
+                print(f'Ставка компьютера: {self.cur_bet}')
             return
 
         # номер комбинации человека и компа
@@ -46,8 +54,10 @@ class Comp(Player):
                 self.bet_status = 'fold'
                 # печать фолда компа
                 print_comp_fold()
+                sleep(2)
                 return
 
+        adding_money = round(adding_money)
         if adding_money >= 10:
             # делаем разброс значений для добавления к ставке человека и берём рандомное число оттуда
             self.cur_bet = human.cur_bet + abs(randint(adding_money - 10, adding_money + 10))
