@@ -8,7 +8,7 @@ class Human(Player):
     def __init__(self):
         super().__init__()
 
-    # сделать ставку (human: object players.comp.Comp)
+    # сделать ставку (comp: object players.comp.Comp)
     def bet(self, comp) -> None:
         # in_game/fold/all_in
         self.bet_status = 'in_game'
@@ -23,13 +23,13 @@ class Human(Player):
                 new_human_bet_row = input(f'{yellow_bold_text}Ваша ставка: {clean_text}')
                 self.cur_bet = int(new_human_bet_row)
                 # если ставка человека меньше ставки компа или больше чем общее кол-во денег человека
-                if not (comp.cur_bet <= self.cur_bet <= self.money):
+                if not (comp.cur_bet <= self.cur_bet <= self.money or comp.bet_status == 'all_in'):
                     raise ValueError('int not in range')
                 break
 
             except ValueError:
                 # если фолд
-                if new_human_bet_row.lower() in ['пас', 'fold']:
+                if new_human_bet_row.lower() in ['пас', 'фолд', 'fold']:
                     self.bet_status = 'fold'
                     break
                 else:

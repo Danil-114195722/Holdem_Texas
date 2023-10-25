@@ -5,7 +5,7 @@ from combinations import combo_define
 class Player:
     def __init__(self):
         self.cards = []
-        self.money = 1000
+        self.money = 100
         self.cur_bet = 0
         # in_game/fold/all_in
         self.bet_status = 'in_game'
