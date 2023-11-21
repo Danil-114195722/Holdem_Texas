@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from math import floor as round_down
 from time import sleep
 from random import shuffle as random_shuffle
@@ -27,7 +29,7 @@ class Game:
         random_shuffle(self.card_deck)
 
     # возвращает текущую колоду карт
-    def get_card_deck(self) -> list[dict]:
+    def get_card_deck(self) -> List[dict]:
         return self.card_deck
 
     # удаление карты из колоды
@@ -49,7 +51,7 @@ class Game:
         # удаление разданной карты из колоды
         Game.remove_card_form_deck(self, dealt_card=first_card_from_deck)
 
-    def do_bets(self, winner: str, human_cards:  tuple[int, list], comp_cards:  tuple[int, list]) -> None:
+    def do_bets(self, winner: str, human_cards:  Tuple[int, list], comp_cards:  Tuple[int, list]) -> None:
         if self.first_stack == 'human':
             # ставка человека
             self.human.bet(comp=self.comp)
@@ -143,7 +145,7 @@ class Game:
                         self.comp.bet(human=self.human, winner=winner, human_combo=human_cards, comp_combo=comp_cards)
                     break
 
-    def winner_definition(self) -> tuple[str, tuple[int, list], tuple[int, list]]:
+    def winner_definition(self) -> Tuple[str, Tuple[int, list], Tuple[int, list]]:
         best_human = None
         best_comp = None
         # human/comp/draw

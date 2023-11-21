@@ -1,3 +1,4 @@
+from typing import Tuple
 from time import sleep
 from random import randint
 
@@ -12,7 +13,7 @@ class Comp(Player):
         self.sleep_time = sleep_time
 
     # сделать ставку компа (human: object players.human.Human)
-    def bet(self, human, winner: str, human_combo: tuple[int, list], comp_combo: tuple[int, list]) -> None:
+    def bet(self, human, winner: str, human_combo: Tuple[int, list], comp_combo: Tuple[int, list]) -> None:
         sleep(self.sleep_time)
         adding_money = 0
 

@@ -1,3 +1,5 @@
+from typing import List
+
 from cards.card import Card
 from combinations import combo_define
 
@@ -19,7 +21,7 @@ class Player:
         self.cur_bet = 0
 
     # определение комбинации игрока
-    def combo_definition(self, table: list[Card]) -> dict:
+    def combo_definition(self, table: List[Card]) -> dict:
         # список объектов
         mix_cards = self.cards + table
         # отсортированный список словарей карт
