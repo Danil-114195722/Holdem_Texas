@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    # my apps
+    'new_auth',
+    # default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,7 +57,9 @@ ROOT_URLCONF = 'Holdem_Texas.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            'Holdem_Texas/templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -104,7 +109,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-
 # LANGUAGE_CODE = 'ru-Ru'
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Moscow'
@@ -112,8 +116,25 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Email settings
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = config.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
+
+
+# media files (Images)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
