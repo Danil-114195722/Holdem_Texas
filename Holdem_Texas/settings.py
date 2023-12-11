@@ -27,12 +27,14 @@ SECRET_KEY = config.SECRET_KEY
 DEBUG = True
 
 ALLOWED_HOSTS = []
+ADMIN_URL = config.ADMIN_URL
 
 
 # Application definition
 INSTALLED_APPS = [
     # my apps
     'new_auth',
+    'user_profile',
     # default apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -76,19 +78,29 @@ WSGI_APPLICATION = 'Holdem_Texas.wsgi.application'
 
 
 # Database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': config.DB_NAME,
+#         'USER': config.DB_USER,
+#         'PASSWORD': config.DB_PASSWORD,
+#         'HOST': config.DB_HOST,
+#         'PORT': config.DB_PORT,
+#         'OPTIONS': {
+#            'unix_socket': config.DB_SOCKET,
+#         },
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config.DB_NAME,
-        'USER': config.DB_USER,
-        'PASSWORD': config.DB_PASSWORD,
-        'HOST': config.DB_HOST,
-        'PORT': config.DB_PORT,
-        'OPTIONS': {
-           'unix_socket': config.DB_SOCKET,
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# переназначение модели юзеров
+AUTH_USER_MODEL = 'new_auth.User'
 
 
 # Password validation
@@ -109,8 +121,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# LANGUAGE_CODE = 'ru-Ru'
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-Ru'
+# LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 USE_TZ = True
