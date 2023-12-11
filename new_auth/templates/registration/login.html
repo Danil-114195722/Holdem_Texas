@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log In</title>
+</head>
+<body>
+    {% include 'base/header.html' %}
+
+    <p>Вход</p>
+    <hr>
+
+    {% if user.is_authenticated %}
+        <h4>Вы уже вошли!</h4>
+        <a href="{% url 'new_auth:logout' %}">Выйти</a>
+
+    {% else %}
+        {% if form.errors %}
+            <p>Неправильная почта или пароль. Попробуйте ещё раз.</p>
+        {% endif %}
+
+        <form action="{% url 'new_auth:login' %}" method="post">
+            {% csrf_token %}
+
+            <p>Почта: {{ form.username }}</p>
+            <p>Пароль: {{ form.password }}</p>
+
+            <button name="submit">Войти</button>
+            <input type="hidden" name="next" value="{% url 'new_auth:homepage' %}"/>
+        </form>
+
+        <p><a href="{% url 'new_auth:password_reset' %}">
+            <button name="submit">Забыли пароль?</button>
+        </a></p>
+        <hr>
+        <p><a href="{% url 'new_auth:sign_up' %}">
+            <button name="submit">Зарегистрироваться</button>
+        </a></p>
+    {% endif %}
+
+</body>
+</html>

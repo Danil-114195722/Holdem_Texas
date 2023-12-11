@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    {% include 'base/header.html' %}
+
+    <p>Главная</p>
+
+    {% if error == "send_email_error" %}
+        <h4>Извините, отправка письма не прошла. Попробуйте ещё раз</h4>
+    {% endif %}
+</body>
+</html>

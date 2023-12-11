@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Edit</title>
+</head>
+<body>
+    {% include 'base/header.html' %}
+
+    <p>Редактирование профиля</p>
+
+    {% if form.errors %}
+        <p>{{ form.errors }}</p>
+    {% endif %}
+
+    <form action="{% url 'user_profile:profile_edit' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <p>Фото: {{ form.photo }}</p>
+        <p>Никнейм: {{ form.nickname }}</p>
+        <p>Дата рождения: {{ form.date_birth }}</p>
+        <p>Местоположение: {{ form.location }}</p>
+        <p>О себе: {{ form.bio }}</p>
+
+        <button name="submit">Сохранить изменения</button>
+		<input type="hidden" name="next" value="{% url 'user_profile:profile_page' %}"/>
+    </form>
+
+    <br>
+
+    <a href="{% url 'user_profile:profile_page' %}">
+        <button name="submit">Назад в профиль</button>
+    </a>
+</body>
+</html>

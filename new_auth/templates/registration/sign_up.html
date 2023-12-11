@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+</head>
+<body>
+    {% include 'base/header.html' %}
+
+    <p>Регистрация</p>
+    <hr>
+
+    {% if user.is_authenticated %}
+        <h4>Вы уже вошли!</h4>
+        <a href="{% url 'new_auth:logout' %}">Выйти</a>
+
+    {% else %}
+        {% if form.errors %}
+            <p>{{ form.errors }}</p>
+        {% endif %}
+
+        <form method="post" action="{% url 'new_auth:sign_up' %}">
+            {% csrf_token %}
+
+            <p>Почта: {{ form.email }}</p>
+            <p>Пароль: {{ form.password1 }}</p>
+            <p>Подтверждение пароля: {{ form.password2 }}</p>
+
+            <button name="submit">Зарегистрироваться</button>
+            <input type="hidden" name="next" value="{% url 'new_auth:homepage' %}"/>
+        </form>
+
+        <hr>
+        <p>
+            <a href="{% url 'new_auth:login' %}">
+                <button name="submit">Есть аккаунт?</button>
+            </a>
+        </p>
+    {% endif %}
+
+</body>
+</html>

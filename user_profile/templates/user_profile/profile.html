@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+    {% include 'base/header.html' %}
+
+    <p>Профиль</p>
+
+    {% if status == "profile_edit" %}
+        <h4>Изменения профиля сохранены!</h4>
+    {% elif status == "change_password" %}
+        <h4>Пароль изменён успешно!</h4>
+    {% endif %}
+
+    <hr>
+
+    <p>Почта: {{ user.email }}</p>
+
+    <a href="{% url 'user_profile:change_password' %}">
+        <button name="submit">Изменить пароль</button>
+    </a>
+
+    <hr>
+
+    {% if profile.photo %}
+        <img src="{{ profile.photo.url }}" alt="Фото" border="4px">
+    {% endif %}
+
+    <p>Никнейм: {{ profile.nickname|default:"не указан" }}</p>
+    <p>Дата рождения: {{ profile.date_birth|default:"не указана" }}</p>
+    <p>Местоположение: {{ profile.location|default:"не указано" }}</p>
+    <p>О себе: {{ profile.bio|default:"не указано" }}</p>
+
+    <a href="{% url 'user_profile:profile_edit' %}">
+        <button name="submit">Редактировать данные профиля</button>
+    </a>
+
+    {% if admin_url %}
+        <hr>
+
+        <p><a href="/{{ admin_url }}/">
+            <button name="submit">Перейти в админ-панель</button>
+        </a></p>
+    {% endif %}
+</body>
+</html>
