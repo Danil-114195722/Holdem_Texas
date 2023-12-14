@@ -4,11 +4,11 @@ from math import floor as round_down
 from time import sleep
 from random import shuffle as random_shuffle
 
-from cards import card
-from players import human, comp, table
+from game.components.cards import card
+from game.components.players import human, comp, table
 
-from outputting.printing import print_table, print_round, print_money, print_winner, print_winner_if_fold
-from outputting.text_styles import yellow_bold_text, clean_text
+from game.components.outputting.printing import print_table, print_round, print_money, print_winner, print_winner_if_fold
+from game.components.outputting.text_styles import yellow_bold_text, clean_text
 
 
 class Game:

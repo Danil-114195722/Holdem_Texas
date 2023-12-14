@@ -1,7 +1,7 @@
-from players.player import Player
+from game.components.players.player import Player
 
-from outputting.printing import print_invalid_bet
-from outputting.text_styles import yellow_bold_text, clean_text
+from game.components.outputting.printing import print_invalid_bet
+from game.components.outputting.text_styles import yellow_bold_text, clean_text
 
 
 class Human(Player):

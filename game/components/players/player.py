@@ -1,7 +1,7 @@
 from typing import List
 
-from cards.card import Card
-from combinations import combo_define
+from game.components.cards.card import Card
+from game.components.combinations import combo_define
 
 
 class Player:

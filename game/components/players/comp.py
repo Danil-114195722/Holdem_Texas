@@ -2,8 +2,8 @@ from typing import Tuple
 from time import sleep
 from random import randint
 
-from players.player import Player
-from outputting.printing import print_comp_fold
+from game.components.players.player import Player
+from game.components.outputting.printing import print_comp_fold
 
 
 class Comp(Player):

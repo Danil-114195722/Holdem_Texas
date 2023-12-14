@@ -1,4 +1,4 @@
-from players.player import Player
+from game.components.players.player import Player
 
 
 class Table(Player):

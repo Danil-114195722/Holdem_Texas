@@ -1,7 +1,7 @@
 from random import choice as random_choice
 
-from cards.card import Card
-from outputting.text_styles import yellow_bold_text, clean_text, blue_bold_text, italic_text, red_italic_text, red_bold_text
+from game.components.cards.card import Card
+from game.components.outputting.text_styles import yellow_bold_text, clean_text, blue_bold_text, italic_text, red_italic_text, red_bold_text
 
 
 # печать подсказки с правилами игры при запуске проги
