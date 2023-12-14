@@ -21,9 +21,13 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
+    # админка
     path(f'{settings.ADMIN_URL}/', admin.site.urls),
+    # авторизация и профиль
     path('', include('new_auth.urls')),
     path('profile/', include('user_profile.urls')),
+    # игра
+    path('game/', include('game.urls')),
 
     # страницы восстановления пароля
     path(
