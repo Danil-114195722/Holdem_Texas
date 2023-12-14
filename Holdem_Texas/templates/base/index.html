@@ -12,5 +12,7 @@
     {% if error == "send_email_error" %}
         <h4>Извините, отправка письма не прошла. Попробуйте ещё раз</h4>
     {% endif %}
+
+    <a href="{% url 'game:new_game' %}">Играть</a>
 </body>
 </html>
