@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     # my apps
     'new_auth',
     'user_profile',
+    'game',
     # default apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -121,8 +122,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-LANGUAGE_CODE = 'ru-Ru'
-# LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'ru-Ru'
+LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 USE_TZ = True
