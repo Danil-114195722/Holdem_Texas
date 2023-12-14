@@ -21,9 +21,9 @@ def homepage(request):
     # здесь нужно как-то обнулять параметры GET-запроса после одного использования
     if request.GET:
         data = {'error': request.GET.get('error')}
-        return render(request, 'registration/index.html', context=data)
+        return render(request, 'base/index.html', context=data)
 
-    return render(request, 'registration/index.html')
+    return render(request, 'base/index.html')
 
 
 def sign_up(request):
