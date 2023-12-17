@@ -8,7 +8,12 @@ DEFAULT_PROFILE_PHOTO = 'profile_photo/default_user_profile_photo.png'
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(verbose_name=_('user email'), to=get_user_model(), on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(
+        verbose_name=_('user email'),
+        to=get_user_model(),
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
     nickname = models.CharField(verbose_name=_('nickname'), max_length=50, null=True, blank=True)
     date_birth = models.DateField(verbose_name=_('birth date'), null=True, blank=True)
     location = models.CharField(verbose_name=_('location'), max_length=100, null=True, blank=True)
