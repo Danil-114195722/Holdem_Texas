@@ -5,8 +5,8 @@ from game.components.outputting.text_styles import yellow_bold_text, clean_text
 
 
 class Human(Player):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, all_money: int):
+        super().__init__(all_money=all_money)
 
     # сделать ставку (comp: object players.comp.Comp)
     def bet(self, comp) -> None:

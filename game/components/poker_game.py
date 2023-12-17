@@ -12,7 +12,7 @@ from game.components.outputting.text_styles import yellow_bold_text, clean_text
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, start_player_money: int):
         # игровые данные
         self.finished_games = 0
         self.continue_game = 'yes'
@@ -20,9 +20,9 @@ class Game:
         self.general_bet = 0
 
         # объекты игроков и стола
-        self.human = human.Human()
-        self.comp = comp.Comp(sleep_time=0.25)
-        self.table = table.Table()
+        self.human = human.Human(all_money=start_player_money)
+        self.comp = comp.Comp(all_money=start_player_money, sleep_time=0.25)
+        self.table = table.Table(all_money=0)
 
         # создание колоды и её перемешивание
         self.card_deck = sum([[{'val': num, 'suit': suit} for num in range(2, 15)] for suit in ['A', 'B', 'C', 'D']], [])
@@ -370,7 +370,6 @@ class Game:
         print_money(human_money=self.human.money, comp_money=self.comp.money, bet_money=self.general_bet)
 
     # запуск игры
-
     def start(self) -> int:
         # печать денег игроков
         print()

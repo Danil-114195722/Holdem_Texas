@@ -7,8 +7,8 @@ from game.components.outputting.printing import print_comp_fold
 
 
 class Comp(Player):
-    def __init__(self, sleep_time):
-        super().__init__()
+    def __init__(self, sleep_time: int, all_money: int):
+        super().__init__(all_money=all_money)
         # время сна перед ставкой компа
         self.sleep_time = sleep_time
 

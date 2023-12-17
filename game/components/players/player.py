@@ -5,9 +5,9 @@ from game.components.combinations import combo_define
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, all_money: int):
         self.cards = []
-        self.money = 100
+        self.money = all_money
         self.cur_bet = 0
         # in_game/fold/all_in
         self.bet_status = 'in_game'
