@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Start Game</title>
+</head>
+<body>
+    {% include 'base/header.html' %}
+
+    <p>Game page</p>
+
+    <div>
+        <h3>Противник</h3>
+        {% if comp_cards %}
+            <ul>
+                {% for card in comp_cards %}
+                    <li><p>{{ card }}</p></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <p>{{ comp_bet }}</p>
+    </div>
+
+    <div>
+        <h3>Вы</h3>
+        {% if human_cards %}
+            <ul>
+                {% for card in human_cards %}
+                    <li><p>{{ card }}</p></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <p>{{ human_bet }}</p>
+    </div>
+
+    <div>
+        <h3>Стол</h3>
+        {% if table_cards %}
+            <ul>
+                {% for card in table_cards %}
+                    <li><p>{{ card }}</p></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <div>
+        <h3>Колода</h3>
+    </div>
+
+
+    <div>
+        <form method="get" action="{% url 'game:new_game' %}">
+            {% if move == "human" %}
+                <p>Сделать ставку</p>
+                <input type="number" name="human_bet">
+            {% endif %}
+
+            <input type="hidden" name="cur_move" value="{{ move }}"/>
+            <button name="end_move">Завершить ход</button>
+        </form>
+    </div>
+</body>
+</html>
